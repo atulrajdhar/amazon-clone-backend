@@ -8,7 +8,7 @@ import Grid from "gridfs-stream";
 import bodyParser from "body-parser";
 import path from "path";
 import Pusher from "pusher";
-const stripe = require('stripe')("sk_test_51HOowFDKfvO7036WKIsiOlWzZgeWmlGH2CBQ5XPx6am8pxN1A5CmLaQ8GyNZ3ECQ7gVsuEWMkBDC6YKeQBVJpG0Z00ldgNFEwK");
+const stripe = require('stripe')("stripe_secret");
 
 import mongoOrder from "./mongoOrder.js";
 
@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // db config
-const mongoURI = "mongodb+srv://admin:ijkqvy7mckg3iah6@cluster0.4cjve.mongodb.net/amazonDB?retryWrites=true&w=majority";
+const mongoURI = "mongodb+srv://admin:<password>@cluster0.4cjve.mongodb.net/<database>?retryWrites=true&w=majority";
 
 const conn = mongoose.createConnection(mongoURI, {
     useCreateIndex: true,
