@@ -9,11 +9,7 @@ import Grid from "gridfs-stream";
 import bodyParser from "body-parser";
 import path from "path";
 import Pusher from "pusher";
-<<<<<<< HEAD
 const stripe = require('stripe')(process.env.STRIPE_SECRET);
-=======
-const stripe = require('stripe')("stripe_secret");
->>>>>>> bc0077ed007397db992b8e9b5227f070e8446721
 
 import users from './routes/users.js';
 import products from './routes/products.js';
@@ -42,11 +38,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // db config
-<<<<<<< HEAD
 const mongoURI = `mongodb+srv://admin:${process.env.DB_PASSWORD}@cluster0.4cjve.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
-=======
-const mongoURI = "mongodb+srv://admin:<password>@cluster0.4cjve.mongodb.net/<database>?retryWrites=true&w=majority";
->>>>>>> bc0077ed007397db992b8e9b5227f070e8446721
 
 const conn = mongoose.createConnection(mongoURI, {
     useCreateIndex: true,
