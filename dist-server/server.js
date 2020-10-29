@@ -36,28 +36,38 @@ var _pusher = require("pusher");
 
 var _pusher2 = _interopRequireDefault(_pusher);
 
-var _mongoOrder = require("./mongoOrder.js");
+var _mongoOrder = require("./models/mongoOrder.js");
 
 var _mongoOrder2 = _interopRequireDefault(_mongoOrder);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var stripe = require('stripe')("sk_test_51HOowFDKfvO7036WKIsiOlWzZgeWmlGH2CBQ5XPx6am8pxN1A5CmLaQ8GyNZ3ECQ7gVsuEWMkBDC6YKeQBVJpG0Z00ldgNFEwK"); // imports
+// imports
+require('dotenv').config();
 
+var stripe = require('stripe')(process.env.STRIPE_SECRET);
 
 // setup gridfs with mongodb
 _gridfsStream2.default.mongo = _mongoose2.default.mongo;
 
 // app config
 var app = (0, _express2.default)();
-var port = process.env.PORT || 9000;
+var port = process.env.PORT; //|| 9000;
+
+var pusher = new _pusher2.default({
+    appId: process.env.PUSHER_APP_ID,
+    key: process.env.PUSHER_APP_KEY,
+    secret: process.env.PUSHER_APP_SECRET,
+    cluster: process.env.PUSHER_APP_CLUSTER,
+    useTLS: true
+});
 
 // middlewares
 app.use(_bodyParser2.default.json());
 app.use((0, _cors2.default)());
 
 // db config
-var mongoURI = "mongodb+srv://admin:ijkqvy7mckg3iah6@cluster0.4cjve.mongodb.net/amazonDB?retryWrites=true&w=majority";
+var mongoURI = "mongodb+srv://admin:" + process.env.DB_PASSWORD + "@cluster0.4cjve.mongodb.net/" + process.env.DB_NAME + "?retryWrites=true&w=majority";
 
 var conn = _mongoose2.default.createConnection(mongoURI, {
     useCreateIndex: true,
@@ -100,6 +110,22 @@ var upload = (0, _multer2.default)({ storage: storage });
 
 _mongoose2.default.connection.once('open', function () {
     console.log("DB Connected");
+
+    var changeStream = _mongoose2.default.connection.collection("orders").watch();
+
+    changeStream.on("change", function (change) {
+        console.log(change);
+
+        if (change.operationType === "insert") {
+            console.log("Triggering Pusher");
+
+            pusher.trigger("orders", "inserted", {
+                change: change
+            });
+        } else {
+            console.log("Error triggering Pusher");
+        }
+    });
 });
 
 // api routes
@@ -136,6 +162,23 @@ app.post("/placeOrder", function (req, res) {
         if (err) {
             res.status(500).send(err);
         } else {
+            res.status(201).send(data);
+        }
+    });
+});
+
+app.get("/retrieveOrders", function (req, res) {
+    var userID = req.query.userID;
+
+    console.log(userID);
+
+    _mongoOrder2.default.find({ "userID": userID }, function (err, data) {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            data.sort(function (b, a) {
+                return a.created - b.created;
+            });
             res.status(201).send(data);
         }
     });

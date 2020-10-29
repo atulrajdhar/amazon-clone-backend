@@ -1,4 +1,5 @@
 // imports
+require('dotenv').config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -8,23 +9,36 @@ import Grid from "gridfs-stream";
 import bodyParser from "body-parser";
 import path from "path";
 import Pusher from "pusher";
-const stripe = require('stripe')("sk_test_51HOowFDKfvO7036WKIsiOlWzZgeWmlGH2CBQ5XPx6am8pxN1A5CmLaQ8GyNZ3ECQ7gVsuEWMkBDC6YKeQBVJpG0Z00ldgNFEwK");
+const stripe = require('stripe')(process.env.STRIPE_SECRET);
 
-import mongoOrder from "./mongoOrder.js";
+import users from './routes/users.js';
+import products from './routes/products.js';
+import payments from './routes/payments.js';
+import orders from './routes/orders.js';
+
+import mongoOrder from "./models/mongoOrder.js";
 
 // setup gridfs with mongodb
 Grid.mongo = mongoose.mongo;
 
 // app config
 const app = express();
-const port = process.env.PORT || 9000;
+const port = process.env.PORT; //|| 9000;
+
+const pusher = new Pusher({
+    appId: process.env.PUSHER_APP_ID,
+    key: process.env.PUSHER_APP_KEY,
+    secret: process.env.PUSHER_APP_SECRET,
+    cluster: process.env.PUSHER_APP_CLUSTER,
+    useTLS: true
+  });
 
 // middlewares
 app.use(bodyParser.json());
 app.use(cors());
 
 // db config
-const mongoURI = "mongodb+srv://admin:ijkqvy7mckg3iah6@cluster0.4cjve.mongodb.net/amazonDB?retryWrites=true&w=majority";
+const mongoURI = `mongodb+srv://admin:${process.env.DB_PASSWORD}@cluster0.4cjve.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 
 const conn = mongoose.createConnection(mongoURI, {
     useCreateIndex: true,
@@ -66,10 +80,32 @@ const upload = multer({ storage });
 
 mongoose.connection.once('open', () => {
     console.log("DB Connected");
+
+    const changeStream = mongoose.connection.collection("orders").watch();
+
+    changeStream.on("change", (change) => {
+        console.log(change);
+
+        if(change.operationType === "insert") {
+            console.log("Triggering Pusher");
+
+            pusher.trigger("orders", "inserted", {
+                change: change
+            })
+        }
+        else {
+            console.log("Error triggering Pusher");
+        }
+    })
 });
 
 // api routes
 app.get("/", (req, res) => res.status(200).send("hello world"));
+
+app.use('/users', users);
+app.use('/products', products);
+app.use('/payments', payments);
+app.use('/orders', orders);
 
 app.post("/upload/image",  upload.single("file"), (req, res) => {
     res.status(201).send(req.file);
@@ -88,7 +124,7 @@ app.post("/payments/create", async (req, res) => {
     // OK - Created
     res.status(201).send({
         clientSecret: paymentIntent.client_secret,
-    })
+    });
 });
 
 app.post("/placeOrder", (req, res) => {
@@ -104,7 +140,25 @@ app.post("/placeOrder", (req, res) => {
             res.status(201).send(data);
         }
     });
-})
+});
+
+app.get("/retrieveOrders", (req, res) => {
+    const userID = req.query.userID;
+
+    console.log(userID);
+
+    mongoOrder.find({"userID": userID}, (err, data) => {
+        if (err) {
+            res.status(500).send(err);
+        }
+        else {
+            data.sort((b, a) => {
+                return a.created - b.created;
+            });
+            res.status(201).send(data);
+        }
+    });
+});
 
 // listener
 app.listen(port, () => console.log(`listening on localhost: ${port}`));
