@@ -1,4 +1,4 @@
-import Order from '../models/order.js';
+import Order from '../models/order';
 
 export default {
     index: async (req, res) => {

@@ -1,8 +1,13 @@
-require('dotenv-expand')(require('dotenv').config());
+import dotenv from 'dotenv';
+import dotenv_expand from 'dotenv-expand';
+
 import mongoose from 'mongoose';
 import multer from 'multer';
 import GridFsStorage from 'multer-gridfs-storage';
 import Grid from 'gridfs-stream';
+
+// setup access to environment variables
+dotenv_expand(dotenv.config());
 
 // setup gridfs with mongodb
 Grid.mongo = mongoose.mongo;

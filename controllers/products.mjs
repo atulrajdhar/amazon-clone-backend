@@ -1,6 +1,6 @@
 //import upload from './config/storage.js';
 
-import Product from '../models/product.js';
+import Product from '../models/product';
 
 export default {
     index: async (req, res) => {
@@ -14,6 +14,11 @@ export default {
     newProduct: async (req, res) => {
         const product = new Product(req.body);        
         await product.save();
+        res.status(201).json(product);
+    },
+
+    deleteProduct: async (req, res) => {
+        const product = await Product.findByIdAndRemove({_id: req.params.productID});
         res.status(201).json(product);
     }
 

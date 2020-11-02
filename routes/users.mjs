@@ -1,6 +1,8 @@
-import UsersController from '../controllers/users.js';
+import UsersController from '../controllers/users';
 
-const router = require('express-promise-router')();
+import Router from 'express-promise-router';
+
+const router = Router();
 
 router.route('/')
     .get(UsersController.index)

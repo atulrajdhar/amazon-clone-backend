@@ -1,4 +1,4 @@
-import User from '../models/user.js';
+import User from '../models/user';
 
 export default {
     index: async (req, res) => {
@@ -9,6 +9,6 @@ export default {
     newUser: async (req, res) => {
         const user = new User(req.body);        
         await user.save();
-        res.status(201).json(user);   
+        res.status(201).json(user);
     }
 };

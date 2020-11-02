@@ -1,7 +1,9 @@
-import OrdersController from '../controllers/orders.js';
+import OrdersController from '../controllers/orders';
 
 // const router = express.Router();
-const router = require('express-promise-router')();
+import Router from 'express-promise-router';
+
+const router = Router();
 
 router.route('/')
     .get(OrdersController.index)
