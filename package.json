@@ -5,15 +5,12 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --require @babel/register",
     "start": "npm run server",
     "server": "node --experimental-modules server.mjs",
     "transpile": "babel ./ --ignore node_modules --out-dir dist-server",
     "clean": "rimraf dist-server",
     "build": "npm-run-all clean transpile"
-  },
-  "babel": {
-    "presets": "es2015"
   },
   "author": "asr",
   "license": "ISC",
@@ -35,6 +32,10 @@
     "stripe": "^8.114.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/register": "^7.12.1",
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-es2015": "^6.24.1",
