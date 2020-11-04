@@ -1,4 +1,5 @@
 import User from '../models/user';
+import getBcryptHash from '../helpers/getBcryptHash';
 
 export default {
     index: async (req, res) => {
@@ -6,8 +7,13 @@ export default {
         res.status(200).json(users);
     },
 
-    newUser: async (req, res) => {
-        const user = new User(req.body);        
+    newUser: async (req, res) => {        
+        const hashedPassword = getBcryptHash(req.body.password);
+        const user = new User({
+            username: req.body.username,
+            password: hashedPassword,
+            email: req.body.email
+        });
         await user.save();
         res.status(201).json(user);
     }
