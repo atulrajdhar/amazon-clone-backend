@@ -6,14 +6,8 @@ import pusher from './pusher';
 
 dotenv_expand(dotenv.config());
 
-export default () => {
+function connect() {
     mongoose.set('useFindAndModify', false);
-
-    mongoose.connect(process.env.DB_URI, {
-        useCreateIndex: true,
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    });
 
     mongoose.connection.once('open', () => {
         console.log("DB Connected");
@@ -35,4 +29,21 @@ export default () => {
             }
         })
     });
-};
+
+    return new Promise((resolve, reject) => {
+        mongoose.connect(process.env.DB_URI, {
+            useCreateIndex: true,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        }).then((res, err) => {
+            if(err) return reject(err);
+            resolve();
+        });
+    });
+}
+
+function close() {
+    return mongoose.disconnect();
+}
+
+export default { connect, close };

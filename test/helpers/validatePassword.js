@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import validatePassword from '../helpers/validatePassword';
+import validatePassword from '../../helpers/validatePassword';
 
 describe('validatePassword', () => {    
     it('should fail when password is null', () => {        

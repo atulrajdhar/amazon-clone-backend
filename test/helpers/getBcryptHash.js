@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import { compare } from 'bcryptjs';
-import getBcryptHash from '../helpers/getBcryptHash';
+import getBcryptHash from '../../helpers/getBcryptHash';
 
 chai.use(chaiAsPromised);
 

@@ -9,39 +9,48 @@ import Grid from 'gridfs-stream';
 // setup access to environment variables
 dotenv_expand(dotenv.config());
 
-// setup gridfs with mongodb
-Grid.mongo = mongoose.mongo;
+function connect() {
+    // setup gridfs with mongodb
+    Grid.mongo = mongoose.mongo;
 
-const conn = mongoose.createConnection(process.env.DB_URI, {
-    useCreateIndex: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+    let gfs;
 
-let gfs;
+    conn.once('open', () => {
+        console.log("DB connected");
 
-conn.once('open', () => {
-    console.log("DB connected");
+        gfs = Grid(conn.db, mongoose.mongo);
+        gfs.collection('images');
+    });
 
-    gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('images');
-});
+    const storage = new GridFsStorage({
+        url: process.env.DB_URI,
+        file: (req, file) => {
+            return new Promise((resolve, reject) => {
+                const filename = `image-${Date.now()}${path.extname(file.originalname)}`
 
-const storage = new GridFsStorage({
-    url: process.env.DB_URI,
-    file: (req, file) => {
-        return new Promise((resolve, reject) => {
-            const filename = `image-${Date.now()}${path.extname(file.originalname)}`
+                const fileInfo={
+                    filename: filename,
+                    bucketName: 'images'
+                }
 
-            const fileInfo={
-                filename: filename,
-                bucketName: 'images'
-            }
+                resolve(fileInfo);
+            })
+        }
+    });
 
-            resolve(fileInfo);
-     })}
-});
+    const upload = multer({ storage });
+    
+    const conn = mongoose.createConnection(process.env.DB_URI, {
+        useCreateIndex: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 
-const upload = multer({ storage });
+    return { conn, upload };
+}
 
-export default upload;
+function close(conn) {
+    return conn.disconnect();
+}
+
+export default { connect, close };

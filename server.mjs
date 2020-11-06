@@ -1,37 +1,12 @@
 // imports
-import dotenv from 'dotenv';
-import dbConfig from './config/db';
+import db from './config/db';
+import app from './app';
 
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
+const port = process.env.PORT || 9000;
 
-import users from './routes/users';
-import products from './routes/products';
-import payments from './routes/payments';
-import orders from './routes/orders';
-
-// setup access to environment variables
-dotenv.config();
-
-// app config
-const app = express();
-const port = process.env.PORT;
-
-// middlewares
-app.use(bodyParser.json());
-app.use(cors());
-
-// db config
-dbConfig();
-
-// api routes
-app.get('/', (req, res) => res.status(200).send("hello world"));
-
-app.use('/users', users);
-app.use('/products', products);
-app.use('/payments', payments);
-app.use('/orders', orders);
-
-// listener
-app.listen(port, () => console.log(`listening on localhost: ${port}`));
+// connect db
+db.connect()
+  .then(() => {
+      // listen
+      app.listen(port, () => console.log(`listening on localhost: ${port}`));
+  });

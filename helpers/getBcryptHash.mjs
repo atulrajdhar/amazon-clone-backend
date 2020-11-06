@@ -1,4 +1,4 @@
-import { hash } from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 export default async (input, salt) => {
     if (input == null || input.length === 0) {
@@ -17,5 +17,5 @@ export default async (input, salt) => {
         throw new Error("Salt value should be greater than 0 and less than or equal to 15");
     }
 
-    return await hash(input, salt);
+    return await bcrypt.hash(input, salt);
 };

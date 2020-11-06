@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import validateUsername from '../helpers/validateUsername';
+import validateUsername from '../../helpers/validateUsername';
 
 describe('validateUsername', () => {
     it('should fail when username is null', () => {        
