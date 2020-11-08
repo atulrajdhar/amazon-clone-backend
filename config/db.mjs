@@ -30,7 +30,7 @@ function connect() {
         })
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {        
         mongoose.connect(process.env.DB_URI, {
             useCreateIndex: true,
             useNewUrlParser: true,
@@ -38,7 +38,7 @@ function connect() {
         }).then((res, err) => {
             if(err) return reject(err);
             resolve();
-        });
+        });        
     });
 }
 

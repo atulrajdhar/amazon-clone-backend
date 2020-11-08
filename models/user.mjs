@@ -1,15 +1,22 @@
 import mongoose from 'mongoose';
 
-const userSchema = mongoose.Schema({
-    firstname: String,
-    initial: String,
-    lastname: String,    
-    email: String,
-    password: String,
-    role: String,
+const userSchema = mongoose.Schema({    
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true
+    },
     orders: [{
-        type: String,   // refers order._id from order model
-        ref: 'order._id'
+        type: String,   
+        ref: 'order._id'    // refers order._id from order model
     }]
 });
 

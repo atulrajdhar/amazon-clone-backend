@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "mocha --require babel-polyfill --require @babel/register --recursive --exit",
-    "test:userApi": "mocha --require babel-polyfill --require @babel/register --watch ./test/api/userApi_test.js ./controllers/users.mjs",
+    "test:api:users": "mocha --require babel-polyfill --require @babel/register --watch ./test/api/users/post.js ./controllers/users.mjs --timeout 10000",
     "start": "npm run server",
     "server": "node --experimental-modules server.mjs",
     "transpile": "babel ./ --ignore node_modules --out-dir dist-server",
@@ -30,7 +30,9 @@
     "npm-run-all": "^4.1.5",
     "path": "^0.12.7",
     "pusher": "^3.0.1",
-    "stripe": "^8.114.0"
+    "security": "file:../helpers/security",
+    "stripe": "^8.114.0",
+    "validators": "file:../helpers/validators"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
@@ -45,6 +47,7 @@
     "chai-as-promised": "^7.1.1",
     "chai-http": "^4.3.0",
     "mocha": "^8.2.0",
+    "mongodb-memory-server": "^6.9.2",
     "rimraf": "^3.0.2"
   }
 }

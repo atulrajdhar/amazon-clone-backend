@@ -8,7 +8,8 @@ router.route('/')
     .get(UsersController.index)
     .post(UsersController.newUser);
 
-// router.route('/:userID')
+ router.route('/:userID')
+    .get(UsersController.getUser);
 //     .patch(UserController.updateUser)
 //     .delete(UserController.deleteUser);
 
