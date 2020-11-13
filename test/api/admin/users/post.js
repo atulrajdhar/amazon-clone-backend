@@ -8,9 +8,9 @@ import chaiHttp from 'chai-http';
 import mongoose from 'mongoose';
 import { MongoMemoryServer} from 'mongodb-memory-server';
 
-import users from '../../../controllers/users';
-import User from '../../../models/user';
-import app from '../../../app';
+import users from '../../../../controllers/admin/users';
+import User from '../../../../models/user';
+import app from '../../../../app';
 
 
 
@@ -37,6 +37,8 @@ describe('POST /users', () => {
         await mongoServer.stop();                  
     });
 
+
+    it('should verify admin');
     it('should create a new user', (done) => {
         const user = new User({
                 username: 'abc',

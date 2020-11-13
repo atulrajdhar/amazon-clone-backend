@@ -5,8 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "test": "mocha --require babel-polyfill --require @babel/register --recursive --exit",
-    "test:api:users": "mocha --require babel-polyfill --require @babel/register --watch ./test/api/users/post.js ./controllers/users.mjs --timeout 10000",
+    "test": "mocha --require babel-polyfill --require @babel/register --recursive --exit --timeout 10000",
+    "test:api:users": "mocha --require babel-polyfill --require @babel/register --watch ./test/api/admin/users/post.js ./controllers/admin/users.mjs --timeout 10000",
     "start": "npm run server",
     "server": "node --experimental-modules server.mjs",
     "transpile": "babel ./ --ignore node_modules --out-dir dist-server",

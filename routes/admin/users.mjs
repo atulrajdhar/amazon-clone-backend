@@ -1,15 +1,15 @@
-import UsersController from '../controllers/users';
+import AdminUserController from '../../controllers/admin/users';
 
 import Router from 'express-promise-router';
 
 const router = Router();
 
 router.route('/')
-    .get(UsersController.index)
-    .post(UsersController.newUser);
+    .get(AdminUserController.index)
+    .post(AdminUserController.newUser);
 
  router.route('/:userID')
-    .get(UsersController.getUser);
+    .get(AdminUserController.getUser);
 //     .patch(UserController.updateUser)
 //     .delete(UserController.deleteUser);
 
